@@ -16,8 +16,10 @@ class Token(NamedTuple):
 
 def tokenize(code):
     #keywords = {'IF', 'THEN', 'ENDIF', 'FOR', 'NEXT', 'GOSUB', 'RETURN'}
+    # Define keywords that are element types in SAD
     keywords  = ['QUAD', 'MARK', 'CAVI', 'BEAMBEAM', 'APERT', 'SOL', 'DRIFT', 'BEND', 'SEXT','OCT', 'MULT', 'MONI', 'LINE','MAP', 'COORD','APERT']
-
+    
+    #Regex patterns to identify different token types
     token_specification = [
         ('NUMBER',   r'([+-])?\d+(\.\d*)?(e[-+]\d+)?|([+-])?\d*(\.\d*)(e[-+]\d+)?'),  # Integer or decimal number
         ('ASSIGN',   r':='),           # Assignment operator
@@ -33,6 +35,8 @@ def tokenize(code):
         ('SKIP',     r'[ \t]+'),       # Skip over spaces and tabs
         ('MISMATCH', r'.'),            # Any other character
     ]
+
+    # Compile regex into one big expression
     tok_regex = '|'.join('(?P<%s>%s)' % pair for pair in token_specification)
     line_num = 1
     line_start = 0
@@ -54,6 +58,8 @@ def tokenize(code):
             continue
         elif kind == 'MISMATCH':
             raise RuntimeError(f'{value!r} unexpected on line {line_num}')
+        
+        # Return token as a named tuple
         yield Token(kind, value, line_num, column)
 
 
